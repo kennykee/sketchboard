@@ -2,14 +2,21 @@ import { useState } from "react";
 import { Redo, Undo, Remove, Add, FitScreen, Save, FolderOpen } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { useCanvasContext } from "../canvas/useCanvasContext";
+import { saveCanvas } from "../../data/db";
 import SimpleDialog from "../modals/RecordPicker";
 
 const TopBar = () => {
   const { state, actions } = useCanvasContext();
   const [open, setOpen] = useState(false);
 
-  const handleSaveChanges = () => {
-    alert("Save functionality not implemented yet.");
+  const handleSaveChanges = async () => {
+    try {
+      const { objects, lines } = state;
+      await saveCanvas({ objects, lines });
+      alert("Canvas saved to your browser (IndexedDB)!");
+    } catch (err) {
+      alert("Failed to save: " + err.message);
+    }
   };
 
   const handleClickOpen = () => {

@@ -19,6 +19,8 @@
     "@mui/icons-material": "^7.3.2",
     "@mui/material": "^7.3.2",
     "@reduxjs/toolkit": "^2.9.0",
+    "dexie": "^4.2.0",
+    "dexie-react-hooks": "^4.2.0",
     "konva": "^9.3.22",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
