@@ -136,14 +136,15 @@ export function createObjectActions({ setObjects, pushHistory, getLines, getColo
     const y = opts.y || 400;
     const width = opts.width || 100;
     const height = opts.height || 100;
-    // Points for an upright triangle centered at (x, y)
+    // Points for a triangle with the top vertex at (x, y),
+    // and base corners at (x - width, y + height) and (x + width, y + height)
     const points = [
       x,
-      y - height / 2, // top
-      x - width / 2,
-      y + height / 2, // bottom left
-      x + width / 2,
-      y + height / 2, // bottom right
+      y, // top vertex (cursor)
+      x - width,
+      y + height, // bottom left
+      x + width,
+      y + height, // bottom right
     ];
     const triangle = {
       id,

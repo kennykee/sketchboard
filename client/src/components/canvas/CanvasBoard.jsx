@@ -126,7 +126,7 @@ export default function CanvasBoard() {
           actions.addPointToLine(pos);
         }
       }}
-      onMouseUp={(e) => {
+      onMouseUp={() => {
         if (!isDrawingRef.current) return;
         isDrawingRef.current = false;
         if (state.tool === "rectangle" && rectPreview && rectPreview.width > 2 && rectPreview.height > 2) {
@@ -157,11 +157,9 @@ export default function CanvasBoard() {
           Math.abs(trianglePreview.height) > 2
         ) {
           // Center and size
-          const x = trianglePreview.x + trianglePreview.width / 2;
-          const y = trianglePreview.y + trianglePreview.height / 2;
           actions.addTriangle({
-            x,
-            y,
+            x: trianglePreview.x,
+            y: trianglePreview.y,
             width: Math.abs(trianglePreview.width),
             height: Math.abs(trianglePreview.height),
             fill: state.fillColor,
@@ -255,6 +253,29 @@ export default function CanvasBoard() {
             listening={false}
           />
         )}
+        {trianglePreview &&
+          state.tool === "triangle" &&
+          Math.abs(trianglePreview.width) > 2 &&
+          Math.abs(trianglePreview.height) > 2 && (
+            <KonvaLine
+              points={[
+                trianglePreview.x,
+                trianglePreview.y, // top vertex (cursor)
+                trianglePreview.x - trianglePreview.width,
+                trianglePreview.y + trianglePreview.height, // bottom left
+                trianglePreview.x + trianglePreview.width,
+                trianglePreview.y + trianglePreview.height, // bottom right
+                trianglePreview.x,
+                trianglePreview.y, // close path
+              ]}
+              closed={false}
+              stroke={state.strokeColor}
+              strokeWidth={2}
+              opacity={0.4}
+              dash={[8, 4]}
+              listening={false}
+            />
+          )}
         {state.objects &&
           state.objects.map((o) => {
             if (o.type === "rect") {
@@ -267,10 +288,14 @@ export default function CanvasBoard() {
                   width={o.width}
                   height={o.height}
                   fill={o.fill}
-                  onDragEnd={(e) => actions.updateObject({ ...o, x: e.target.x(), y: e.target.y() })}
+                  draggable
                   onClick={() => setSelectedId(o.id)}
                   onDragEnd={(e) =>
-                    actions.updateObject({ ...o, x: e.target.x() + (o.width || 0) / 2, y: e.target.y() + (o.height || 0) / 2 })
+                    actions.updateObject({
+                      ...o,
+                      x: e.target.x() + (o.width || 0) / 2,
+                      y: e.target.y() + (o.height || 0) / 2,
+                    })
                   }
                 />
               );

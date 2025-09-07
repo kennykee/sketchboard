@@ -3,7 +3,7 @@ import { Redo, Undo, Remove, Add, FitScreen, Save, FolderOpen } from "@mui/icons
 import Button from "@mui/material/Button";
 import { useCanvasContext } from "../canvas/useCanvasContext";
 import { saveCanvas } from "../../data/db";
-import SimpleDialog from "../modals/RecordPicker";
+import SimpleDialog from "../modals/RecordPickerModal";
 
 const TopBar = () => {
   const { state, actions } = useCanvasContext();
@@ -29,7 +29,7 @@ const TopBar = () => {
 
   return (
     <div className="canvas-toolbar">
-      <div className="breadcrumbs">Canvas • Untitled</div>
+      <div className="breadcrumbs">Canvas • {state.recordName}</div>
       <div className="group" style={{ gap: "18px" }}>
         <Button variant="outlined" startIcon={<Save />} size="small" disableElevation onClick={handleSaveChanges}>
           Save Changes

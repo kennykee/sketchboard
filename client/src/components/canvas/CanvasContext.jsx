@@ -13,8 +13,8 @@ const CanvasProvider = ({ children }) => {
   const [brushSize, setBrushSize] = useState(5);
   const [fontFamily, setFontFamily] = useState("Arial");
   const [fontSize, setFontSize] = useState(16);
-  const [fillColor, setFillColor] = useState("#00ff00");
-  const [strokeColor, setStrokeColor] = useState("#ffa500");
+  const [fillColor, setFillColor] = useState("#B3E5FC");
+  const [strokeColor, setStrokeColor] = useState("#0288D1");
   const [opacity, setOpacity] = useState(1);
   const [lines, setLines] = useState([]);
   const [objects, setObjects] = useState([]);
@@ -23,6 +23,7 @@ const CanvasProvider = ({ children }) => {
   const [zoom, setZoom] = useState(1);
   const [canvasSize, setCanvasSize] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
+  const [recordName, setRecordName] = useState("Untitled");
 
   const width = canvasSize ? canvasSize.width : 1200;
   const height = canvasSize ? canvasSize.height : 800;
@@ -129,6 +130,7 @@ const CanvasProvider = ({ children }) => {
     zoom,
     canvasSize,
     selectedId,
+    recordName,
   };
 
   const actions = {
@@ -162,6 +164,7 @@ const CanvasProvider = ({ children }) => {
     setSelectedId,
     setHistory,
     setHistoryIndex,
+    setRecordName,
   };
 
   return <CanvasContext.Provider value={{ refs, state, actions }}>{children}</CanvasContext.Provider>;
