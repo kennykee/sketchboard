@@ -1,4 +1,21 @@
 export function createObjectActions({ setObjects, pushHistory, getLines, getColor, getFontSize, getFontFamily }) {
+  function addImage(opts = {}) {
+    const id = Date.now();
+    const img = {
+      id,
+      type: "image",
+      x: opts.x || 600,
+      y: opts.y || 400,
+      width: opts.width || 200,
+      height: opts.height || 200,
+      url: opts.url,
+    };
+    setObjects((o) => {
+      const next = [...o, img];
+      pushHistory(getLines(), next);
+      return next;
+    });
+  }
   function addShape(type, opts = {}) {
     const id = Date.now();
     const base = {
@@ -39,27 +56,93 @@ export function createObjectActions({ setObjects, pushHistory, getLines, getColo
     });
   }
 
+  function pointInTriangle(px, py, x1, y1, x2, y2, x3, y3) {
+    // Barycentric technique
+    const dX = px - x3;
+    const dY = py - y3;
+    const dX21 = x3 - x2;
+    const dY12 = y2 - y3;
+    const D = dY12 * (x1 - x3) + dX21 * (y1 - y3);
+    const s = dY12 * dX + dX21 * dY;
+    const t = (y3 - y1) * dX + (x1 - x3) * dY;
+    if (D < 0) return s <= 0 && t <= 0 && s + t >= D;
+    return s >= 0 && t >= 0 && s + t <= D;
+  }
+
+  function isPointNearLine(px, py, x1, y1, x2, y2, threshold = 8) {
+    // Distance from point to segment
+    const A = px - x1;
+    const B = py - y1;
+    const C = x2 - x1;
+    const D = y2 - y1;
+    const dot = A * C + B * D;
+    const len_sq = C * C + D * D;
+    let param = -1;
+    if (len_sq !== 0) param = dot / len_sq;
+    let xx, yy;
+    if (param < 0) {
+      xx = x1;
+      yy = y1;
+    } else if (param > 1) {
+      xx = x2;
+      yy = y2;
+    } else {
+      xx = x1 + param * C;
+      yy = y1 + param * D;
+    }
+    const dx = px - xx;
+    const dy = py - yy;
+    return dx * dx + dy * dy <= threshold * threshold;
+  }
+
   function removeObjectAtPoint(point) {
     setObjects((o) => {
       for (let i = o.length - 1; i >= 0; i--) {
         const item = o[i];
-        const left = item.x - (item.width || 0) / 2;
-        const top = item.y - (item.height || 0) / 2;
-        const right = left + (item.width || 0);
-        const bottom = top + (item.height || 0);
-        if (item.type === "text") {
-          const l = item.x - 60,
-            r = item.x + 60,
-            t = item.y - item.fontSize,
-            b = item.y + 10;
-          if (point.x >= l && point.x <= r && point.y >= t && point.y <= b) {
+        if (item.type === "rect") {
+          const left = item.x - (item.width || 0) / 2;
+          const top = item.y - (item.height || 0) / 2;
+          const right = left + (item.width || 0);
+          const bottom = top + (item.height || 0);
+          if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) {
             const next = o.slice();
             next.splice(i, 1);
             pushHistory(getLines(), next);
             return next;
           }
-        } else {
-          if (point.x >= left && point.x <= right && point.y >= top && point.y <= bottom) {
+        } else if (item.type === "circle") {
+          const dx = point.x - item.x;
+          const dy = point.y - item.y;
+          const r = item.radius || 0;
+          if (dx * dx + dy * dy <= r * r) {
+            const next = o.slice();
+            next.splice(i, 1);
+            pushHistory(getLines(), next);
+            return next;
+          }
+        } else if (item.type === "triangle" && Array.isArray(item.points) && item.points.length === 6) {
+          const [x1, y1, x2, y2, x3, y3] = item.points;
+          if (pointInTriangle(point.x, point.y, x1, y1, x2, y2, x3, y3)) {
+            const next = o.slice();
+            next.splice(i, 1);
+            pushHistory(getLines(), next);
+            return next;
+          }
+        } else if (item.type === "arrow" && Array.isArray(item.points) && item.points.length === 4) {
+          // Check if point is near the arrow line
+          const [x1, y1, x2, y2] = item.points;
+          if (isPointNearLine(point.x, point.y, x1, y1, x2, y2)) {
+            const next = o.slice();
+            next.splice(i, 1);
+            pushHistory(getLines(), next);
+            return next;
+          }
+        } else if (item.type === "text") {
+          const l = item.x - 60,
+            r = item.x + 60,
+            t = item.y - item.fontSize,
+            b = item.y + 10;
+          if (point.x >= l && point.x <= r && point.y >= t && point.y <= b) {
             const next = o.slice();
             next.splice(i, 1);
             pushHistory(getLines(), next);
@@ -206,6 +289,7 @@ export function createObjectActions({ setObjects, pushHistory, getLines, getColo
     addTriangle,
     addArrow,
     addTextBox,
+    addImage,
     removeObjectAtPoint,
     bringForward,
     sendBackward,

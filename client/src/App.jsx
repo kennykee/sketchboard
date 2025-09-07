@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { AccountCircle, ConnectWithoutContact } from "@mui/icons-material";
 import { useCanvasContext } from "./components/canvas/useCanvasContext";
@@ -8,11 +8,13 @@ import RightPanel from "./components/sections/PropertyBar";
 import CanvasBoard from "./components/canvas/CanvasBoard";
 import TopBar from "./components/sections/TopBar";
 import FooterComponent from "./components/sections/Footer";
+import LoginModal from "./components/modals/LoginModal";
 import "./app.css";
 
 export default function App() {
   const wrapperRef = useRef(null);
   const { state, actions } = useCanvasContext();
+  const [loginOpen, setLoginOpen] = useState(false);
 
   useEffect(() => {
     if (wrapperRef.current) {
@@ -26,7 +28,17 @@ export default function App() {
   };
 
   const handleAccountClick = () => {
-    alert("Login functionality not implemented yet.");
+    setLoginOpen(true);
+  };
+
+  const handleLogin = (username) => {
+    actions.login(username);
+    setLoginOpen(false);
+  };
+
+  const handleSignOut = () => {
+    actions.logout();
+    setLoginOpen(false);
   };
 
   return (
@@ -36,7 +48,7 @@ export default function App() {
           <img src={Logo} className="logo" />
           Collaborative SketchBoard
         </div>
-        <div className="topbar-actions">
+        <div className="topbar-actions" style={{ display: "none" }}>
           <button className="icon-btn live-share" onClick={handleShareClick} title="Live Share">
             <ConnectWithoutContact fontSize="large" color="inherit" />
           </button>
@@ -46,6 +58,13 @@ export default function App() {
             <AccountCircle fontSize="large" color="inherit" />
           </button>
         </div>
+        <LoginModal
+          open={loginOpen}
+          onClose={() => setLoginOpen(false)}
+          username={state.username}
+          onLogin={handleLogin}
+          onSignOut={handleSignOut}
+        />
       </header>
 
       <div className="workspace">

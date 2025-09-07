@@ -1,5 +1,60 @@
 import React, { useRef, useEffect, useState } from "react";
-import { Stage, Layer, Line, Rect, Circle, Text, Transformer, Line as KonvaLine, Arrow as KonvaArrow } from "react-konva";
+import {
+  Stage,
+  Layer,
+  Line,
+  Rect,
+  Circle,
+  Text,
+  Transformer,
+  Line as KonvaLine,
+  Arrow as KonvaArrow,
+  Image as KonvaImage,
+} from "react-konva";
+import useImage from "use-image";
+function ImageObject({ o, setSelectedId, actions, isSelected, transformerRef }) {
+  const [img] = useImage(o.url);
+  const shapeRef = useRef();
+  useEffect(() => {
+    if (isSelected && transformerRef.current && shapeRef.current) {
+      transformerRef.current.nodes([shapeRef.current]);
+      transformerRef.current.getLayer().batchDraw();
+    }
+  }, [isSelected, transformerRef]);
+  if (!o.url) return null;
+  return (
+    <KonvaImage
+      id={`shape-${o.id}`}
+      key={o.id}
+      ref={shapeRef}
+      x={o.x - (o.width || 0) / 2}
+      y={o.y - (o.height || 0) / 2}
+      width={o.width}
+      height={o.height}
+      image={img}
+      draggable
+      onClick={() => setSelectedId(o.id)}
+      onDragEnd={(e) => actions.updateObject({ ...o, x: e.target.x() + (o.width || 0) / 2, y: e.target.y() + (o.height || 0) / 2 })}
+      onTransformEnd={(e) => {
+        const node = shapeRef.current;
+        if (node) {
+          const scaleX = node.scaleX();
+          const scaleY = node.scaleY();
+          // Reset scale to 1 after resizing, update width/height
+          node.scaleX(1);
+          node.scaleY(1);
+          actions.updateObject({
+            ...o,
+            x: node.x() + (node.width() * scaleX) / 2,
+            y: node.y() + (node.height() * scaleY) / 2,
+            width: Math.max(10, node.width() * scaleX),
+            height: Math.max(10, node.height() * scaleY),
+          });
+        }
+      }}
+    />
+  );
+}
 import { useCanvasContext } from "./useCanvasContext";
 
 export default function CanvasBoard() {
@@ -87,10 +142,10 @@ export default function CanvasBoard() {
           actions.addTextBox({
             x: pos.x,
             y: pos.y,
-            text: "Text",
+            text: state.editText,
             fontSize: state.fontSize,
             fontFamily: state.fontFamily,
-            fill: state.fillColor,
+            fill: state.strokeColor,
           });
         } else if (!state.tool || state.tool === "brush") {
           isDrawingRef.current = true;
@@ -288,6 +343,8 @@ export default function CanvasBoard() {
                   width={o.width}
                   height={o.height}
                   fill={o.fill}
+                  stroke={o.stroke || state.strokeColor}
+                  strokeWidth={o.strokeWidth || 2}
                   draggable
                   onClick={() => setSelectedId(o.id)}
                   onDragEnd={(e) =>
@@ -367,6 +424,7 @@ export default function CanvasBoard() {
                         width: "100%",
                         fontSize: o.fontSize,
                         fontFamily: o.fontFamily,
+                        fontWeight: "bold",
                         color: o.fill,
                         border: "1px solid #888",
                         background: "#fff",
@@ -409,9 +467,26 @@ export default function CanvasBoard() {
                 />
               );
             }
+            if (o.type === "image") {
+              return (
+                <React.Fragment key={o.id}>
+                  <ImageObject
+                    o={o}
+                    setSelectedId={setSelectedId}
+                    actions={actions}
+                    isSelected={selectedId === o.id}
+                    transformerRef={transformerRef}
+                  />
+                </React.Fragment>
+              );
+            }
             return null;
           })}
-        <Transformer ref={transformerRef} rotateEnabled={false} />
+        <Transformer
+          ref={transformerRef}
+          rotateEnabled={false}
+          enabledAnchors={["top-left", "top-right", "bottom-left", "bottom-right"]}
+        />
       </Layer>
     </Stage>
   );

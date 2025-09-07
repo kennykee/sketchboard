@@ -1,29 +1,44 @@
-# .github/workflows/node.yml
-name: "Dummy Node.js Workflow"
-
-# No triggers → workflow will never run automatically
-on: []
-
+name: Deploy to Production
+on:
+  push:
+    branches:
+      - main
 jobs:
-  dummy-job:
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: "18"
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H "${{ secrets.SERVER_IP }}" >> ~/.ssh/known_hosts
 
-      - name: Install dependencies
-        run: npm install
+      - name: Build frontend (Vite)
+        working-directory: client
+        run: npm install && npm run build
 
-      - name: Run build
-        run: npm run build
+      - name: Copy frontend build to server/public
+        run: |
+          rm -rf server/public
+          mkdir -p server/public
+          cp -r client/dist/* server/public/
 
-      - name: Run tests
-        run: npm test
+      - name: Deploy server folder to server
+        run: |
+          rsync -avz --delete --exclude=".git" --exclude=".env" server/ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}:/var/www/html-sketchboard.schoolapp.sg/"
 
-      - name: Dummy echo
-        run: echo "This workflow is currently disabled and will not run"
+      - name: Fix ownership and permissions on server
+        run: |
+          ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "chown -R www-data:www-data /var/www/html-sketchboard.schoolapp.sg && find /var/www/html-sketchboard.schoolapp.sg -type d -exec chmod 755 {} \; && find /var/www/html-sketchboard.schoolapp.sg -type f -exec chmod 644 {} \;"
+
+      - name: Install dependencies on server
+        run: |
+          ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "cd /var/www/html-sketchboard.schoolapp.sg && sudo -u www-data bash -c 'npm install'"
+
+      - name: Start or restart application with PM2
+        run: ssh "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_IP }}" "cd /var/www/html-sketchboard.schoolapp.sg && sudo -u www-data pm2 delete sketchboard-app || true && sudo -u www-data pm2 start ecosystem.config.cjs --env production --update-env && sudo -u www-data pm2 save"

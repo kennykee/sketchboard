@@ -2,18 +2,42 @@ import { useState } from "react";
 import { Redo, Undo, Remove, Add, FitScreen, Save, FolderOpen } from "@mui/icons-material";
 import Button from "@mui/material/Button";
 import { useCanvasContext } from "../canvas/useCanvasContext";
-import { saveCanvas } from "../../data/db";
+import { saveCanvas, updateCanvas } from "../../data/db";
+import SaveRecordModal from "../modals/SaveRecordModal";
 import SimpleDialog from "../modals/RecordPickerModal";
 
 const TopBar = () => {
   const { state, actions } = useCanvasContext();
   const [open, setOpen] = useState(false);
+  const [saveModalOpen, setSaveModalOpen] = useState(false);
 
-  const handleSaveChanges = async () => {
+  const handleSaveChanges = () => {
+    // If recordId exists, overwrite, else show modal
+    if (state.recordId) {
+      handleOverwriteRecord();
+    } else {
+      setSaveModalOpen(true);
+    }
+  };
+
+  const handleOverwriteRecord = async () => {
+    try {
+      const { objects, lines, recordName, recordId } = state;
+      await updateCanvas(recordId, { name: recordName, objects, lines });
+      // Optionally show a toast or feedback
+    } catch (err) {
+      alert("Failed to overwrite: " + err.message);
+    }
+  };
+
+  const handleSaveRecord = async (name) => {
     try {
       const { objects, lines } = state;
-      await saveCanvas({ objects, lines });
-      alert("Canvas saved to your browser (IndexedDB)!");
+      // Save new record, get new id
+      const newId = await saveCanvas({ name, objects, lines });
+      actions.setRecordName(name);
+      actions.setRecordId(newId); // update recordId in state
+      setSaveModalOpen(false);
     } catch (err) {
       alert("Failed to save: " + err.message);
     }
@@ -61,6 +85,12 @@ const TopBar = () => {
         </div>
       </div>
       <SimpleDialog open={open} onClose={handleClose} />
+      <SaveRecordModal
+        open={saveModalOpen}
+        onClose={() => setSaveModalOpen(false)}
+        onSave={handleSaveRecord}
+        defaultName={state.recordName}
+      />
     </div>
   );
 };

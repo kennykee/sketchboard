@@ -1,8 +1,10 @@
+import React from "react";
 import { useCanvasContext } from "../canvas/useCanvasContext";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import TextField from "@mui/material/TextField";
 
 function RightPanel() {
   const { state, actions } = useCanvasContext();
@@ -56,7 +58,6 @@ function RightPanel() {
               value={state.fontFamily}
               label="Font Family"
               style={{ color: "#94a3b8" }}
-              bor
               onChange={(e) => actions.setFontFamily(e.target.value)}
             >
               <MenuItem value="Arial">Arial</MenuItem>
@@ -75,6 +76,43 @@ function RightPanel() {
             </Select>
           </FormControl>
         </div>
+        {state.tool === "text" && (
+          <div className="prop-row">
+            <FormControl fullWidth size="small" sx={{ mt: 1 }}>
+              <TextField
+                id="edit-text-field"
+                label="Edit Text"
+                variant="outlined"
+                size="small"
+                value={state.editText}
+                onChange={(e) => {
+                  actions.setEditText(e.target.value);
+                  const obj = state.objects.find((o) => o.id === state.selectedId);
+                  if (obj && obj.type === "text") {
+                    actions.updateObject({ ...obj, text: e.target.value });
+                  }
+                }}
+                placeholder="Enter text..."
+                fullWidth
+                InputProps={{
+                  style: {
+                    background: "#fff",
+                    color: "#222",
+                    borderRadius: 4,
+                  },
+                }}
+                InputLabelProps={{
+                  style: {
+                    color: "#222",
+                    background: "#ffc107",
+                    padding: "0 4px",
+                    borderRadius: 4,
+                  },
+                }}
+              />
+            </FormControl>
+          </div>
+        )}
       </div>
     </aside>
   );

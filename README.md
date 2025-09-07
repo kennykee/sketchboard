@@ -1,6 +1,11 @@
 # Sketchboard App
 
-A modern, collaborative sketchboard built with React, React Konva, and Material UI. Draw, annotate, and brainstorm visually with a variety of tools in a fast, intuitive interface.
+A modern, collaborative sketchboard by **SchoolApp.sg**, built with **React**, **React Konva**, **Material UI**, and **Express.js**. The app allows users to draw, annotate, and brainstorm visually using a variety of tools in a fast, intuitive interface. Hosted on **Digital Ocean** with **PM2** and deployed via **GitHub Actions**, it is developed using modern JavaScript (ES6) and smart workflows to ensure high code quality, performance, and reliability.
+
+- **GitHub Link:** [Collaborative SketchBoard](https://github.com/kennykee/sketchboard)
+- **Demo:** [sketchboard.schoolapp.sg](https://sketchboard.schoolapp.sg/)
+
+![Game Screenshot](./Screenshot.jpg)
 
 ## Features
 
@@ -45,7 +50,7 @@ A modern, collaborative sketchboard built with React, React Konva, and Material 
 
 ### Server (Optional)
 
-If you want to use the backend server (for future collaboration features):
+If you want to use the backend server:
 
 ```sh
 cd ../server
@@ -53,14 +58,14 @@ npm install
 npm run dev
 ```
 
-## Project Structure
+## 📁 Project Structure
 
 ```
 client/    # Frontend React app
 server/    # Node.js backend (optional)
 ```
 
-## Tech Stack
+## 📦 Built With
 
 - React
 - React Konva
@@ -68,13 +73,25 @@ server/    # Node.js backend (optional)
 - Vite
 - Node.js (server)
 
-## Contributing
+## 👍 Choice of Technology:
 
-Pull requests are welcome! For major changes, please open an issue first to discuss what you would like to change.
+A lean and modern JavaScript stack was selected to maximize efficiency, speed, and business value:
 
-## License
+- **Vite (React Frontend)**  
+  A next-generation build tool that delivers lightning-fast development with Hot Module Replacement and optimized production builds, ensuring excellent performance and developer experience.
 
-[MIT](LICENSE)
+- **Material UI (Design System)**  
+  A robust and customizable component library that provides a clean, modern interface out of the box, accelerating UI development while maintaining a professional look and feel.
+
+- **Node.js with Express (Backend)**  
+  A lightweight, high-performance backend framework that unifies frontend and backend development in JavaScript. This reduces context switching, streamlines workflows, and enables faster delivery with fewer moving parts.
+
+By consolidating on a single language across the stack, the technology remains simple, efficient, and easy to maintain. This approach minimizes overhead, accelerates delivery, and ensures that the application is built on a proven, future-ready foundation.
+
+## 🧾 License
+
+This project is licensed under the MIT License.  
+See the [`LICENSE`](./LICENSE) file for full details.
 
 ---
 

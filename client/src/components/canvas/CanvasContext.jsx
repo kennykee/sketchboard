@@ -1,7 +1,6 @@
 import React, { createContext, useState, useCallback, useRef, useEffect } from "react";
 import { createLineActions } from "./actions/linesTools";
 import { createObjectActions } from "./actions/objectsTools";
-import { createExportActions } from "./actions/exportTools";
 
 const CanvasContext = createContext(null);
 
@@ -12,7 +11,7 @@ const CanvasProvider = ({ children }) => {
   const [tool, setTool] = useState("brush");
   const [brushSize, setBrushSize] = useState(5);
   const [fontFamily, setFontFamily] = useState("Arial");
-  const [fontSize, setFontSize] = useState(16);
+  const [fontSize, setFontSize] = useState(28);
   const [fillColor, setFillColor] = useState("#B3E5FC");
   const [strokeColor, setStrokeColor] = useState("#0288D1");
   const [opacity, setOpacity] = useState(1);
@@ -24,9 +23,9 @@ const CanvasProvider = ({ children }) => {
   const [canvasSize, setCanvasSize] = useState(null);
   const [selectedId, setSelectedId] = useState(null);
   const [recordName, setRecordName] = useState("Untitled");
-
-  const width = canvasSize ? canvasSize.width : 1200;
-  const height = canvasSize ? canvasSize.height : 800;
+  const [recordId, setRecordId] = useState(null);
+  const [username, setUsername] = useState(() => getCookie("sketchboard_user") || null);
+  const [editText, setEditText] = useState("New Text");
 
   const undo = useCallback(() => {
     setHistoryIndex((idx) => {
@@ -93,6 +92,7 @@ const CanvasProvider = ({ children }) => {
     addTriangle,
     addArrow,
     addTextBox,
+    addImage,
     removeObjectAtPoint,
     bringForward,
     sendBackward,
@@ -105,7 +105,7 @@ const CanvasProvider = ({ children }) => {
     getFontSize,
     getFontFamily,
   });
-  const { exportToJSON } = createExportActions({ stageRef, getLines, getObjects, width, height });
+
   const clear = useCallback(() => {
     setLines([]);
     setObjects([]);
@@ -131,6 +131,9 @@ const CanvasProvider = ({ children }) => {
     canvasSize,
     selectedId,
     recordName,
+    recordId,
+    username,
+    editText,
   };
 
   const actions = {
@@ -154,20 +157,44 @@ const CanvasProvider = ({ children }) => {
     addTriangle,
     addArrow,
     addTextBox,
+    addImage,
     removeObjectAtPoint,
     bringForward,
     sendBackward,
     updateObject,
-    exportToJSON,
     setZoom,
     setCanvasSize,
     setSelectedId,
     setHistory,
     setHistoryIndex,
     setRecordName,
+    setObjects,
+    setLines,
+    setRecordId,
+    setEditText,
+    login: (user) => {
+      setUsername(user);
+      setCookie("sketchboard_user", user);
+    },
+    logout: () => {
+      setUsername(null);
+      deleteCookie("sketchboard_user");
+    },
   };
 
   return <CanvasContext.Provider value={{ refs, state, actions }}>{children}</CanvasContext.Provider>;
 };
+
+function getCookie(name) {
+  const match = document.cookie.match(new RegExp("(^| )" + name + "=([^;]+)"));
+  return match ? decodeURIComponent(match[2]) : null;
+}
+function setCookie(name, value, days = 30) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = name + "=" + encodeURIComponent(value) + "; expires=" + expires + "; path=/";
+}
+function deleteCookie(name) {
+  document.cookie = name + "=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+}
 
 export { CanvasContext, CanvasProvider };
