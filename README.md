@@ -1,4 +1,4 @@
-# Sketchboard App
+# 🎨 Sketchboard App
 
 A modern, collaborative sketchboard by **SchoolApp.sg**, built with React, React Konva, Material UI, and Express.js. The app allows users to draw, annotate, and brainstorm visually using a variety of tools in a fast, intuitive interface. Hosted on Digital Ocean with PM2 and deployed via GitHub Actions, it is developed using modern JavaScript (ES6) and smart workflows to ensure high code quality, performance, and reliability.
 
