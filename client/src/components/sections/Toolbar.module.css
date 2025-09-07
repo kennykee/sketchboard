@@ -1,15 +1,8 @@
 .leftToolbar {
-  width: 56px;
+  width: 64px;
   background: var(--panel);
   padding: 12px;
   border-radius: 12px;
   color: var(--muted);
   box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
-}
-.leftToolbar h4 {
-  font-size: 12px;
-  margin: 8px 0;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
 }

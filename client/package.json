@@ -7,7 +7,7 @@
   "license": "MIT",
   "keywords": [],
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --logLevel info",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",

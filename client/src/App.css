@@ -60,7 +60,6 @@ body {
 }
 .brand {
   font-weight: 700;
-  color: var(--accent);
   display: flex;
   align-items: center;
   width: 100%;
@@ -93,6 +92,8 @@ body {
   padding: 6px 8px;
   border-radius: 8px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 .icon-btn:hover {
   background: rgba(255, 255, 255, 0.02);
@@ -105,9 +106,11 @@ body {
   margin-bottom: 14px;
 }
 .tool-btn {
-  display: block;
-  width: 100%;
-  padding: 8px 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  padding: 8px 8px;
   margin: 6px 0;
   border-radius: 8px;
   border: none;
@@ -224,7 +227,11 @@ input[type="color"] {
 .layer-active {
   background: linear-gradient(90deg, rgba(31, 111, 235, 0.12), rgba(31, 111, 235, 0.02));
 }
-
+.account-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .canvas-area {
   flex: 1;
   display: flex;
@@ -241,14 +248,14 @@ input[type="color"] {
 }
 .canvas-wrapper {
   flex: 1;
-  background: linear-gradient(180deg, #071126, #041022);
+  background: white;
   border-radius: 12px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  align-items: flex-start;
+  justify-content: flex-start;
   position: relative;
   overflow: hidden;
-  padding: 20px;
+  border: solid 5px #ffc107;
 }
 canvas#editor-canvas {
   background: linear-gradient(180deg, #0b1220, #08101a);
@@ -272,6 +279,7 @@ canvas#editor-canvas {
   padding: 12px;
   border-radius: 12px;
   color: var(--muted);
+  box-sizing: border-box;
   box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
 }
 .panel-section {
@@ -288,7 +296,8 @@ canvas#editor-canvas {
   height: 40px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
+  gap: 12px;
   padding: 0 16px;
   background: rgba(0, 0, 0, 0.12);
   border-top: 1px solid rgba(255, 255, 255, 0.02);
@@ -309,19 +318,6 @@ canvas#editor-canvas {
   background: transparent;
   color: var(--muted);
   margin-bottom: 6px;
-}
-
-/* small screens */
-@media (max-width: 900px) {
-  .left-toolbar {
-    display: none;
-  }
-  .right-panel {
-    display: none;
-  }
-  .canvas-wrapper {
-    padding: 8px;
-  }
 }
 
 @media (prefers-color-scheme: light) {
