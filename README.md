@@ -1,13 +1,13 @@
 # Sketchboard App
 
-A modern, collaborative sketchboard by **SchoolApp.sg**, built with **React**, **React Konva**, **Material UI**, and **Express.js**. The app allows users to draw, annotate, and brainstorm visually using a variety of tools in a fast, intuitive interface. Hosted on **Digital Ocean** with **PM2** and deployed via **GitHub Actions**, it is developed using modern JavaScript (ES6) and smart workflows to ensure high code quality, performance, and reliability.
+A modern, collaborative sketchboard by **SchoolApp.sg**, built with React, React Konva, Material UI, and Express.js. The app allows users to draw, annotate, and brainstorm visually using a variety of tools in a fast, intuitive interface. Hosted on Digital Ocean with PM2 and deployed via GitHub Actions, it is developed using modern JavaScript (ES6) and smart workflows to ensure high code quality, performance, and reliability.
 
 - **GitHub Link:** [Collaborative SketchBoard](https://github.com/kennykee/sketchboard)
 - **Demo:** [sketchboard.schoolapp.sg](https://sketchboard.schoolapp.sg/)
 
 ![Game Screenshot](./Screenshot.jpg)
 
-## Features
+## ✔️ Features
 
 - **Drawing Tools:** Brush, Rectangle, Circle, Triangle, Arrow, and Text
 - **Eraser:** Remove any object or brush stroke with a click
@@ -17,9 +17,8 @@ A modern, collaborative sketchboard by **SchoolApp.sg**, built with **React**, *
 - **Zoom:** Zoom in/out and fit to screen
 - **Color & Style:** Choose fill and stroke colors, opacity, and more
 - **History:** All actions are undoable and redoable
-- **Responsive UI:** Built with Material UI for a clean, modern look
 
-## Getting Started
+## 🔧 Getting Started
 
 ### Prerequisites
 
@@ -30,8 +29,8 @@ A modern, collaborative sketchboard by **SchoolApp.sg**, built with **React**, *
 
 1. **Clone the repository:**
    ```sh
-   git clone https://github.com/kennykee/sketchboard-app.git
-   cd sketchboard-app
+   git clone https://github.com/kennykee/sketchboard.git
+   cd sketchboard
    ```
 2. **Install dependencies:**
    ```sh

@@ -9,7 +9,7 @@ import CanvasBoard from "./components/canvas/CanvasBoard";
 import TopBar from "./components/sections/TopBar";
 import FooterComponent from "./components/sections/Footer";
 import LoginModal from "./components/modals/LoginModal";
-import "./app.css";
+import "./App.css";
 
 export default function App() {
   const wrapperRef = useRef(null);
